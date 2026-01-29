@@ -11,7 +11,13 @@ add_definitions(${LLVM_DEFINITIONS})
 
 add_executable(obfuscator src/main.cpp)
 
-llvm_map_components_to_libnames(LLVM_LIBS support)
+llvm_map_components_to_libnames(
+  LLVM_LIBS
+  support
+  core
+  irreader
+)
+
 
 target_link_libraries(obfuscator ${LLVM_LIBS})
 

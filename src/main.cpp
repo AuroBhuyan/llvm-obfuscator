@@ -14,7 +14,36 @@ int main(int argc, char** argv){
     return 1;
     }
 
+llvm::LLVMContext context;
+llvm::SMDiagnostic error;
+//Loading the IR file
+auto module = llvm::parseIRFile(argv[1],error,context);
+//Handling Invalid IR
+if(!module){
+    error.print("obfuscator",llvm::errs());
+    return 1;
+}
+//Counters
+size_t funcCount = 0;
+size_t bbCount = 0;
+size_t instCount = 0;
 
-llvm::outs()<<"LLVM Status 1\n";
+for(const llvm::Function& F : *module){
+    if(F.isDeclaration()) continue;
+    funcCount++;
+
+    for(const llvm::BasicBlock& BB : F){
+        bbCount++;
+
+        for(const llvm::Instruction& I : BB){
+            instCount++;
+        }
+    }
+}
+
+llvm::outs() << "Functions: " << funcCount << "\n";
+llvm::outs() << "BasicBlocks: " << bbCount << "\n";
+llvm::outs() << "Instructions: " << instCount << "\n";
+
 return 0;
 }

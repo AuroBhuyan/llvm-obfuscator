@@ -249,3 +249,9 @@ Anything involving:
 Trigger phrase:
 
 > **“Phase 1 — start with reading IR”**
+LLVM IR hierarchy:
+
+Module
+ └── Function
+      └── BasicBlock
+           └── Instruction
