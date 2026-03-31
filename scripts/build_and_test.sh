@@ -88,10 +88,10 @@ done
 
 if [ -n "$LLC" ]; then
     echo -e "    Using llc: $LLC"
-    "$LLC" -filetype=obj "$OBF_IR" -o "$BUILD_DIR/obf.o" 2>&1
+    "$LLC" -filetype=obj --relocation-model=pic "$OBF_IR" -o "$BUILD_DIR/obf.o" 2>&1
     LLC_EXIT=$?
     if [ $LLC_EXIT -eq 0 ] && [ -f "$BUILD_DIR/obf.o" ]; then
-        clang++ "$BUILD_DIR/obf.o" -o "$BUILD_DIR/obfuscated" 2>&1
+        clang++ -no-pie "$BUILD_DIR/obf.o" -o "$BUILD_DIR/obfuscated" 2>&1
         LINK_EXIT=$?
         if [ $LINK_EXIT -eq 0 ]; then
             echo -e "${GREEN}[OK]${NC} build/obfuscated ready (native binary via llc)"
@@ -106,8 +106,8 @@ if [ -n "$LLC" ]; then
 else
     echo -e "${YELLOW}[!]${NC} llc not found. Installing llvm-14..."
     sudo apt-get install -y llvm-14 -q
-    llc-14 -filetype=obj "$OBF_IR" -o "$BUILD_DIR/obf.o" 2>&1 && \
-        clang++ "$BUILD_DIR/obf.o" -o "$BUILD_DIR/obfuscated" 2>&1 && \
+    llc-14 -filetype=obj --relocation-model=pic "$OBF_IR" -o "$BUILD_DIR/obf.o" 2>&1 && \
+        clang++ -no-pie "$BUILD_DIR/obf.o" -o "$BUILD_DIR/obfuscated" 2>&1 && \
         echo -e "${GREEN}[OK]${NC} build/obfuscated ready" || \
         { echo -e "${YELLOW}[!]${NC} Falling back to original binary"; cp "$BUILD_DIR/original" "$BUILD_DIR/obfuscated"; }
 fi
